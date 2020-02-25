@@ -17,3 +17,7 @@ services:
         tags:
             - { name: twig.extension }
         arguments: ["%comur_image.cropped_image_dir%", "%comur_image.thumbs_dir%", "%comur_image.public_dir%", "%comur_image.translation_domain%", "%comur_image.gallery_dir%"]
+
+    Comur\ImageBundle\Form\Type\CroppableImageType: '@comur_image_bundle.image_type'
+    Comur\ImageBundle\Form\Type\CroppableGalleryType: '@comur_image_bundle.gallery_type'
+    Comur\ImageBundle\Twig\ThumbExtension: '@comur.twig.thumb_extension'

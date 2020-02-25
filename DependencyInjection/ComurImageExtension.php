@@ -14,6 +14,7 @@ use Symfony\Component\DependencyInjection\Loader;
  */
 class ComurImageExtension extends Extension
 {
+    
     /**
      * {@inheritDoc}
      */

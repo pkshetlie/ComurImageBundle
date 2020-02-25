@@ -99,7 +99,7 @@ function initializeImageManager(id, options, cb){
                 $('#selected_image').val(data.result['image_upload_file'][0].name); 
                 if (options.cropConfig.disable) {
                     $('#'+id).val(data.result['image_upload_file'][0].name);
-                    $('#image_preview_image_'+id).html('<img src="'+options.uploadConfig.webDir + '/' + data.result['image_upload_file'][0].name +'?'+ new Date().getTime()+'" id="'+id+'_preview"/>');
+                    $('#image_preview_image_'+id).html('<img class="img-fluid" src="'+options.uploadConfig.webDir + '/' + data.result['image_upload_file'][0].name +'?'+ new Date().getTime()+'" id="'+id+'_preview"/>');
                     reinitModal();
                     cb({
                         previewSrc: '/' + options.uploadConfig.webDir + '/' + data.result['image_upload_file'][0].name +'?'+ new Date().getTime(),
@@ -166,7 +166,7 @@ function initJCrop(id, options){
     // if(!options.cropConfig.disableCrop){
         var now = new Date().getTime();
         $('#image_preview img').remove();
-        $('#image_preview').html('<img src="/'+options.uploadConfig.webDir + '/'+$('#selected_image').val()+'?'+now+'" id="image_preview_image"/>');
+        $('#image_preview').html('<img class="img-fluid" src="/'+options.uploadConfig.webDir + '/'+$('#selected_image').val()+'?'+now+'" id="image_preview_image"/>');
         $($('#image_preview img')[0]).on('load', function(){
 
             
@@ -244,7 +244,7 @@ function cropImage(id, options){
                 else{
                     // console.log('simple image');
                     $('#'+id).val(filename);
-                    $('#image_preview_image_'+id).html('<img src="'+previewSrc+'?'+ new Date().getTime()+'" id="'+id+'_preview"/>');
+                    $('#image_preview_image_'+id).html('<img class="img-fluid" src="'+previewSrc+'?'+ new Date().getTime()+'" id="'+id+'_preview"/>');
                     // console.log(options.uploadConfig.saveOriginal, $('#'+options.originalImageFieldId), options.originalImageFieldId);
                     if(options.uploadConfig.saveOriginal){
                         // console.log('set '+$('#selected_image').val());

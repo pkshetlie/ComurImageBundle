@@ -1,7 +1,6 @@
-{% block comur_image_widget %}
+{% block comur_image_widget -%}
     {% trans_default_domain comur_translation_domain %}
     {# trans_default_domain 'ComurImageBundle' #}
-    {% spaceless %}
         {# block('form_widget_simple') #}
         {{ form_widget(form[name])}}
         {% if options.uploadConfig.saveOriginal %}
@@ -21,24 +20,23 @@
             <div id="image_preview_image_{{form[name].vars.id}}">
                 {% if not options.fieldImage %}
                     {% if form[name].vars.value %}
-                        <img title="{{ options.cropConfig.minWidth }} x {{ options.cropConfig.minHeight}}" src="/{{ options.uploadConfig.webDir ~ '/' ~ form[name].vars.value }}?{{ 'now'  | date('U') }}" id="{{ form[name].vars.id }}_preview" style="{{ options.uploadConfig.saveOriginal ? 'cursor:hand; cursor: pointer' : ''}}"/>
+                        <img  class="img-fluid" title="{{ options.cropConfig.minWidth }} x {{ options.cropConfig.minHeight}}" src="/{{ options.uploadConfig.webDir ~ '/' ~ form[name].vars.value }}?{{ 'now'  | date('U') }}" id="{{ form[name].vars.id }}_preview" style="{{ options.uploadConfig.saveOriginal ? 'cursor:hand; cursor: pointer' : ''}}"/>
                     {% else %}
-                        <img title="{{ options.cropConfig.minWidth }} x {{ options.cropConfig.minHeight}}" data-src="holder.js/{{ options.cropConfig.minWidth }}x{{ options.cropConfig.minHeight}}" id="{{ form[name].vars.id }}_preview"/>
+                        <img class="img-fluid"  title="{{ options.cropConfig.minWidth }} x {{ options.cropConfig.minHeight}}" data-src="holder.js/{{ options.cropConfig.minWidth }}x{{ options.cropConfig.minHeight}}" id="{{ form[name].vars.id }}_preview"/>
                     {% endif %}
                 {% else %}
                     {% if form[name].vars.value %}
-                        <img title="{{ options.cropConfig.minWidth }} x {{ options.cropConfig.minHeight}}" src="/{{ (options.uploadConfig.webDir ~ '/' ~ form[name].vars.value)|thumb(options.fieldImage.maxWidth, options.fieldImage.maxHeight) }}?{{ 'now'  | date('U') }}" id="{{ form[name].vars.id }}_preview" style="{{ options.uploadConfig.saveOriginal ? 'cursor:hand; cursor: pointer' : ''}}"/>
+                        <img class="img-fluid"  title="{{ options.cropConfig.minWidth }} x {{ options.cropConfig.minHeight}}" src="/{{ (options.uploadConfig.webDir ~ '/' ~ form[name].vars.value)|thumb(options.fieldImage.maxWidth, options.fieldImage.maxHeight) }}?{{ 'now'  | date('U') }}" id="{{ form[name].vars.id }}_preview" style="{{ options.uploadConfig.saveOriginal ? 'cursor:hand; cursor: pointer' : ''}}"/>
                     {% else %}
-                        <img title="{{ options.cropConfig.minWidth }} x {{ options.cropConfig.minHeight}}" data-src="holder.js/{{ options.fieldImage.maxWidth }}x{{ options.fieldImage.maxHeight}}" id="{{ form[name].vars.id }}_preview"/>
+                        <img class="img-fluid"  title="{{ options.cropConfig.minWidth }} x {{ options.cropConfig.minHeight}}" data-src="holder.js/{{ options.fieldImage.maxWidth }}x{{ options.fieldImage.maxHeight}}" id="{{ form[name].vars.id }}_preview"/>
                     {% endif %}
                 {% endif %}
 
             </div>
         </div>
-    {% endspaceless %}
 
     <script>
-        $(document).ready(function(){
+        var initComurWidget = function(){
             Holder.run();
             {% if options.uploadConfig.saveOriginal %}
                 if($('#{{ form[options.uploadConfig.saveOriginal].vars.id }}').val()){
@@ -63,24 +61,22 @@
                   keyboard: false
                 });
             });
-        });
-        $('.select-image-button').mouseover(function(){
-            if(!$(this).hasClass('hide-disabled'))
-                $(this).children('.image_edit_button').removeClass('hidden');
-        });
-        $('.select-image-button').mouseout(function(){
-            if(!$(this).hasClass('hide-disabled'))
-                $(this).children('.image_edit_button').addClass('hidden');
-        });
-
+            $('.select-image-button').mouseover(function(){
+                if(!$(this).hasClass('hide-disabled'))
+                    $(this).children('.image_edit_button').removeClass('hidden');
+            });
+            $('.select-image-button').mouseout(function(){
+                if(!$(this).hasClass('hide-disabled'))
+                    $(this).children('.image_edit_button').addClass('hidden');
+            });
+        };
     </script>
-{% endblock %}
+{%- endblock %}
 
-{% block comur_gallery_widget %}
+{% block comur_gallery_widget -%}
     {% trans_default_domain comur_translation_domain %}
     {# trans_default_domain 'ComurImageBundle' #}
 
-    {% spaceless %}
         {{- form_errors(form) -}}
         <div class="field-error clearfix hidden">
             <div id="{{form[name].vars.id}}_widget_error" class="alert alert-danger span6">
@@ -94,7 +90,7 @@
                         <span class="gallery-image-helper"></span>
                         {{ form_widget(image) }}
                         <span class="remove-image"><i class="fa fa-times" data-delete="image"></i></span>
-                        <img src="/{{ (options.uploadConfig.webDir ~ '/' ~ image.vars.value)|thumb(options.galleryThumbSize, options.galleryThumbSize) }}?{{ 'now'  | date('U') }}"/>
+                        <img class="img-fluid" src="/{{ (options.uploadConfig.webDir ~ '/' ~ image.vars.value)|thumb(options.galleryThumbSize, options.galleryThumbSize) }}?{{ 'now'  | date('U') }}"/>
                     </div>
                 {% endfor %}
             </div>
@@ -107,12 +103,9 @@
             </div>
         </div>
 
-
-    {% endspaceless %}
-
     <script>
 
-        $(document).ready(function(){
+        let initComurWidget = function(){
             rebindGalleryRemove();
             galleries['{{form[name].vars.id}}'] = true;
             $('#image_add_button_{{form[name].vars.id}}').click(function(event){
@@ -132,4 +125,4 @@
         });
 
     </script>
-{% endblock %}
+{%- endblock %}

@@ -12,13 +12,24 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
+    /** @var bool */
+    private $debug;
+
+    /**
+     * @param bool $debug Whether to use the debug mode
+     */
+    public function __construct($debug = false)
+    {
+        $this->debug = (bool) $debug;
+    }
+
     /**
      * {@inheritDoc}
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('comur_image');
+        $treeBuilder = new TreeBuilder("comur_image");
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()

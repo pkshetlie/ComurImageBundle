@@ -8,27 +8,31 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\VarDumper\VarDumper;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Finder\Finder;
 
 use Comur\ImageBundle\Handler\UploadHandler;
 
-class UploadController extends Controller
+class UploadController extends AbstractController
 {
     /**
      * Save uploaded image according to comur_image field configuration
-     *
+     * @Route("/upload",name="comur_api_upload", options = { "expose" = true })
      * @param Request $request
-     */
-    public function uploadImageAction(Request $request
+     */    
+    public function uploadImage(Request $request,TranslatorInterface $translator
         /*, $uploadUrl, $paramName, $webDir, $minWidth=1, $minHeight=1*/
     ){
         $config = json_decode($request->request->get('config'),true);
 
-        $thumbsDir = $this->container->getParameter('comur_image.thumbs_dir');
-        $thumbSize = $this->container->getParameter('comur_image.media_lib_thumb_size');
+        $thumbsDir = $this->getParameter('comur_image.thumbs_dir');
+        $thumbSize = $this->getParameter('comur_image.media_lib_thumb_size');
         if (isset($config['uploadConfig']['uploadDir'])) {
-            $uploadUrl = $this->container->getParameter('comur_image.public_dir') . '/' . $config['uploadConfig']['uploadDir'];
+            $uploadUrl = $this->getParameter('comur_image.public_dir') . '/' . $config['uploadConfig']['uploadDir'];
         } else {
             // For backward compatibility
             /**
@@ -54,8 +58,8 @@ class UploadController extends Controller
             }
         }
 
-        $galleryDir = $this->container->getParameter('comur_image.gallery_dir');
-        $gThumbSize = $this->container->getParameter('comur_image.gallery_thumb_size');
+        $galleryDir = $this->getParameter('comur_image.gallery_dir');
+        $gThumbSize = $this->getParameter('comur_image.gallery_thumb_size');
 
         $ext = $request->files->get('image_upload_file')->getClientOriginalExtension();//('image_upload_file');
         $completeName = $filename.'.'.$ext;
@@ -80,27 +84,27 @@ class UploadController extends Controller
             )
         );
 
-        $transDomain = $this->container->getParameter('comur_image.translation_domain');
+        $transDomain = $this->getParameter('comur_image.translation_domain');
 
         $errorMessages = array(
-            1 => $this->get('translator')->trans('The uploaded file exceeds the upload_max_filesize directive in php.ini', array(), $transDomain),
-            2 => $this->get('translator')->trans('The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form', array(), $transDomain),
-            3 => $this->get('translator')->trans('The uploaded file was only partially uploaded', array(), $transDomain),
-            4 => $this->get('translator')->trans('No file was uploaded', array(), $transDomain),
-            6 => $this->get('translator')->trans('Missing a temporary folder', array(), $transDomain),
-            7 => $this->get('translator')->trans('Failed to write file to disk', array(), $transDomain),
-            8 => $this->get('translator')->trans('A PHP extension stopped the file upload', array(), $transDomain),
-            'post_max_size' => $this->get('translator')->trans('The uploaded file exceeds the post_max_size directive in php.ini', array(), $transDomain),
-            'max_file_size' => $this->get('translator')->trans('File is too big', array(), $transDomain),
-            'min_file_size' => $this->get('translator')->trans('File is too small', array(), $transDomain),
-            'accept_file_types' => $this->get('translator')->trans('Filetype not allowed', array(), $transDomain),
-            'max_number_of_files' => $this->get('translator')->trans('Maximum number of files exceeded', array(), $transDomain),
-            'max_width' => $this->get('translator')->trans('Image exceeds maximum width', array(), $transDomain),
-            'min_width' => $this->get('translator')->trans('Image requires a minimum width (%min%)', array('%min%' => $config['cropConfig']['minWidth']), $transDomain),
-            'max_height' => $this->get('translator')->trans('Image exceeds maximum height', array(), $transDomain),
-            'min_height' => $this->get('translator')->trans('Image requires a minimum height (%min%)', array('%min%' => $config['cropConfig']['minHeight']), $transDomain),
-            'abort' => $this->get('translator')->trans('File upload aborted', array(), $transDomain),
-            'image_resize' => $this->get('translator')->trans('Failed to resize image', array(), $transDomain),
+            1 => $translator->trans('The uploaded file exceeds the upload_max_filesize directive in php.ini', array(), $transDomain),
+            2 => $translator->trans('The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form', array(), $transDomain),
+            3 => $translator->trans('The uploaded file was only partially uploaded', array(), $transDomain),
+            4 => $translator->trans('No file was uploaded', array(), $transDomain),
+            6 => $translator->trans('Missing a temporary folder', array(), $transDomain),
+            7 => $translator->trans('Failed to write file to disk', array(), $transDomain),
+            8 => $translator->trans('A PHP extension stopped the file upload', array(), $transDomain),
+            'post_max_size' => $translator->trans('The uploaded file exceeds the post_max_size directive in php.ini', array(), $transDomain),
+            'max_file_size' => $translator->trans('File is too big', array(), $transDomain),
+            'min_file_size' => $translator->trans('File is too small', array(), $transDomain),
+            'accept_file_types' => $translator->trans('Filetype not allowed', array(), $transDomain),
+            'max_number_of_files' => $translator->trans('Maximum number of files exceeded', array(), $transDomain),
+            'max_width' => $translator->trans('Image exceeds maximum width', array(), $transDomain),
+            'min_width' => $translator->trans('Image requires a minimum width (%min%)', array('%min%' => $config['cropConfig']['minWidth']), $transDomain),
+            'max_height' => $translator->trans('Image exceeds maximum height', array(), $transDomain),
+            'min_height' => $translator->trans('Image requires a minimum height (%min%)', array('%min%' => $config['cropConfig']['minHeight']), $transDomain),
+            'abort' => $translator->trans('File upload aborted', array(), $transDomain),
+            'image_resize' => $translator->trans('Failed to resize image', array(), $transDomain),
         );
 
         $response->setCallback(function () use($handlerConfig, $errorMessages) {
@@ -112,10 +116,10 @@ class UploadController extends Controller
 
     /**
      * Crop image using jCrop and upload config parameters and create thumbs if needed
-     *
+     * @Route("/crop",name="comur_api_crop", options = { "expose" = true })
      * @param Request $request
      */
-    public function cropImageAction(Request $request
+    public function cropImage(Request $request,TranslatorInterface $translator
         /*, $uploadUrl, $webDir, $imageName, $x, $y, $w, $h, $tarW, $tarH*/
     ){
         $config = json_decode($request->request->get('config'),true);
@@ -146,7 +150,7 @@ class UploadController extends Controller
         // $disableCrop = $config['cropConfig']['disableCrop'];
 
         if (isset($config['uploadConfig']['uploadDir'])) {
-            $uploadUrl = $this->container->getParameter('comur_image.public_dir') . '/' . urldecode($config['uploadConfig']['uploadDir']);
+            $uploadUrl = $this->getParameter('comur_image.public_dir') . '/' . urldecode($config['uploadConfig']['uploadDir']);
         } else {
             // For backward compatibility
             /**
@@ -168,15 +172,15 @@ class UploadController extends Controller
         //     }
         // }
 
-        if (!is_dir($uploadUrl.'/'.$this->container->getParameter('comur_image.cropped_image_dir').'/')) {
-            mkdir($uploadUrl.'/'.$this->container->getParameter('comur_image.cropped_image_dir').'/', 0755, true);
+        if (!is_dir($uploadUrl.'/'.$this->getParameter('comur_image.cropped_image_dir').'/')) {
+            mkdir($uploadUrl.'/'.$this->getParameter('comur_image.cropped_image_dir').'/', 0755, true);
         }
         $ext = pathinfo($imageName, PATHINFO_EXTENSION);
         //set uniq filename if defined inside the configuration
         if($config['uploadConfig']['generateFilename']){
             $imageName = sha1(uniqid(mt_rand(), true)).'.'.$ext;
         }
-        $destSrc = $uploadUrl.'/'.$this->container->getParameter('comur_image.cropped_image_dir').'/'.$imageName;
+        $destSrc = $uploadUrl.'/'.$this->getParameter('comur_image.cropped_image_dir').'/'.$imageName;
         //$writeFunc($dstR,$src,$imageQuality);
 
         $destW = $w;
@@ -200,8 +204,8 @@ class UploadController extends Controller
 
         $galleryThumbOk = false;
         $isGallery = isset($config['uploadConfig']['isGallery']) ? $config['uploadConfig']['isGallery'] : false;
-        $galleryDir = $this->container->getParameter('comur_image.gallery_dir');
-        $gThumbSize = $this->container->getParameter('comur_image.gallery_thumb_size');
+        $galleryDir = $this->getParameter('comur_image.gallery_dir');
+        $gThumbSize = $this->getParameter('comur_image.gallery_thumb_size');
 
         if($isGallery)
         {
@@ -214,10 +218,10 @@ class UploadController extends Controller
 
 
         //Create thumbs if asked
-        $previewSrc = '/'.$config['uploadConfig']['webDir'] . '/' . $this->container->getParameter('comur_image.cropped_image_dir') . '/'. $imageName;
+        $previewSrc = '/'.$config['uploadConfig']['webDir'] . '/' . $this->getParameter('comur_image.cropped_image_dir') . '/'. $imageName;
         if(isset($config['cropConfig']['thumbs']) && ($thumbs = $config['cropConfig']['thumbs']) && count($thumbs))
         {
-            $thumbDir = $uploadUrl.'/'.$this->container->getParameter('comur_image.cropped_image_dir') . '/' . $this->container->getParameter('comur_image.thumbs_dir').'/';
+            $thumbDir = $uploadUrl.'/'.$this->getParameter('comur_image.cropped_image_dir') . '/' . $this->getParameter('comur_image.thumbs_dir').'/';
             if(!is_dir($thumbDir))
             {
                 mkdir($thumbDir);
@@ -240,15 +244,15 @@ class UploadController extends Controller
                 $thumbSrc = $thumbDir . $thumbName;
                 $this->resizeCropImage($thumbSrc, $destSrc, 0, 0, 0, 0, $w, $h, $destW, $destH);
                 if(isset($thumb['useAsFieldImage']) && $thumb['useAsFieldImage']){
-                    $previewSrc = '/'.$config['uploadConfig']['webDir'] . '/' . $this->container->getParameter('comur_image.cropped_image_dir') . '/'. $this->container->getParameter('comur_image.thumbs_dir'). '/' . $thumbName;
+                    $previewSrc = '/'.$config['uploadConfig']['webDir'] . '/' . $this->getParameter('comur_image.cropped_image_dir') . '/'. $this->getParameter('comur_image.thumbs_dir'). '/' . $thumbName;
                 }
             }
         }
 
         return new Response(json_encode(array('success' => true,
-                                              'filename'=>$this->container->getParameter('comur_image.cropped_image_dir').'/'.$imageName,
+                                              'filename'=>$this->getParameter('comur_image.cropped_image_dir').'/'.$imageName,
                                               'previewSrc' => $previewSrc,
-                                              'galleryThumb' => $this->container->getParameter('comur_image.cropped_image_dir') . '/' . $this->container->getParameter('comur_image.thumbs_dir').'/'.$gThumbSize.'x'.$gThumbSize.'-' .$imageName)));
+                                              'galleryThumb' => $this->getParameter('comur_image.cropped_image_dir') . '/' . $this->getParameter('comur_image.thumbs_dir').'/'.$gThumbSize.'x'.$gThumbSize.'-' .$imageName)));
     }
 
     /**
@@ -302,10 +306,11 @@ class UploadController extends Controller
 
     /**
      * Returns files from required directory
-     *
+     * @Route("/image-library",name="comur_api_image_library", options = { "expose" = true })
+
      * @param Request $request
      */
-    public function getLibraryImagesAction(Request $request){
+    public function getLibraryImages(Request $request){
         $finder = new Finder();
 
         $finder->sortByType();
@@ -313,9 +318,9 @@ class UploadController extends Controller
         $result = array();
         $files = array();
 
-        $result['thumbsDir'] = $this->container->getParameter('comur_image.thumbs_dir');
+        $result['thumbsDir'] = $this->getParameter('comur_image.thumbs_dir');
 
-        $libDir = $this->container->getParameter('comur_image.public_dir') . '/' .  $request->request->get('dir');
+        $libDir = $this->getParameter('comur_image.public_dir') . '/' .  $request->request->get('dir');
 
         if (!is_dir($libDir)) {
             mkdir($libDir.'/', 0755, true);
@@ -424,16 +429,16 @@ class UploadController extends Controller
     }
 
     /**
+     * @Route("",name="")
      * returns translation catalogue to add it for javascript translation support
      * @param Request $request
      * @return Response
      */
-    public function getTranslationCatalogue(Request $request) {
-        $transDomain = $this->container->getParameter('comur_image.translation_domain');
-        $translator = $this->container->get('translator');
+    public function getTranslationCatalogue(Request $request, TranslatorInterface $translator) {
+        $transDomain = $this->getParameter('comur_image.translation_domain');
+//        $translator = new Translator($request->getLocale());
         $catalogue = $translator->getCatalogue($request->getLocale());
         $messages = $catalogue->all();
-
         return $this->render('@ComurImage/translations.html.twig', array(
             'messages' => $messages[$transDomain]
         ));
