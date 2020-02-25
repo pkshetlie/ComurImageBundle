@@ -46,11 +46,11 @@
 {% block comur_image_stylesheets %}
     <link rel="stylesheet" href="{{ asset('bundles/comurimage/vendor/Jcrop/css/jquery.Jcrop.min.css') }}"
           type="text/css"/>
-    {% if include_bootstrap is not defined or include_bootstrap %}
-        <!-- The bootstrap stylesheet, can be omitted if already inclided -->
-        <link rel="stylesheet" href="{{ asset('bundles/comurimage/vendor/bootstrap/dist/css/bootstrap.min.css') }}"
-              type="text/css"/>
-    {% endif %}
+{#    {% if include_bootstrap is not defined or include_bootstrap %}#}
+{#        <!-- The bootstrap stylesheet, can be omitted if already inclided -->#}
+{#        <link rel="stylesheet" href="{{ asset('bundles/comurimage/vendor/bootstrap/dist/css/bootstrap.min.css') }}"#}
+{#              type="text/css"/>#}
+{#    {% endif %}#}
     <link rel="stylesheet" href="{{ asset('bundles/comurimage/css/comur.image_bundle.css') }}" type="text/css"/>
 {% endblock %}
 
