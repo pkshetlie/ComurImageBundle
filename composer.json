@@ -25,8 +25,7 @@
         "symfony/routing": "5.*",
         "symfony/config": "5.*",
         "symfony/twig-bridge": "5.*",
-        "twig/twig": "5.*",
-        "twig/extensions": "5.*",
+        "symfony/twig-bundle": "^4.3|^5.0",
         "friendsofsymfony/jsrouting-bundle": "@stable",
 	    "jms/translation-bundle": "^1.2.2"
     },
